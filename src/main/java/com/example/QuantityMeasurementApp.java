@@ -25,16 +25,12 @@ public class QuantityMeasurementApp {
         private final LengthUnit unit;
 
         public Quantity(double value, LengthUnit unit) {
-            if (unit == null) {
-                throw new IllegalArgumentException("Unit cannot be null");
-            }
-            if (!Double.isFinite(value)) {
-                throw new IllegalArgumentException("Value must be finite");
+            if (unit == null || !Double.isFinite(value)) {
+                throw new IllegalArgumentException();
             }
             this.value = value;
             this.unit = unit;
         }
-
         public double getValue() {
             return value;
         }
@@ -43,21 +39,19 @@ public class QuantityMeasurementApp {
             return unit;
         }
 
-        private double toBaseUnit() {
-            return unit.toFeet(value);
-        }
+        public Quantity add(Quantity other) {
+            if (other == null) {
+                throw new IllegalArgumentException();
+            }
 
-        public Quantity convertTo(LengthUnit targetUnit) {
-            double convertedValue = QuantityMeasurementApp.convert(this.value, this.unit, targetUnit);
-            return new Quantity(convertedValue, targetUnit);
-        }
+            double sumFeet =
+                    this.unit.toFeet(this.value) +
+                            other.unit.toFeet(other.value);
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Quantity other = (Quantity) obj;
-            return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < 1e-4;
+            double result =
+                    sumFeet / this.unit.toFeet(1.0);
+
+            return new Quantity(result, this.unit);
         }
 
         @Override
@@ -67,36 +61,25 @@ public class QuantityMeasurementApp {
     }
 
     public static double convert(double value, LengthUnit source, LengthUnit target) {
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Value must be finite");
+        if (!Double.isFinite(value) || source == null || target == null) {
+            throw new IllegalArgumentException();
         }
-        if (source == null || target == null) {
-            throw new IllegalArgumentException("Units cannot be null");
-        }
-        double valueInFeet = source.toFeet(value);
-        return valueInFeet / target.toFeet(1.0);
+
+        double inFeet = source.toFeet(value);
+        return inFeet / target.toFeet(1.0);
     }
 
     public static void main(String[] args) {
 
-        System.out.println("convert(1.0, FEET, INCH) = " +
-                convert(1.0, LengthUnit.FEET, LengthUnit.INCH));
-
-        System.out.println("convert(3.0, YARDS, FEET) = " +
-                convert(3.0, LengthUnit.YARDS, LengthUnit.FEET));
-
-        System.out.println("convert(36.0, INCH, YARDS) = " +
-                convert(36.0, LengthUnit.INCH, LengthUnit.YARDS));
-
-        System.out.println("convert(1.0, CENTIMETERS, INCH) = " +
-                convert(1.0, LengthUnit.CENTIMETERS, LengthUnit.INCH));
-
         Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
         Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
 
-        System.out.println(q1 + " equals " + q2 + " → " + q1.equals(q2));
+        System.out.println(q1.add(q2));
+        System.out.println(q2.add(q1));
 
-        Quantity converted = q1.convertTo(LengthUnit.INCH);
-        System.out.println(q1 + " in INCH → " + converted);
+        Quantity q3 = new Quantity(1.0, LengthUnit.YARDS);
+        Quantity q4 = new Quantity(3.0, LengthUnit.FEET);
+
+        System.out.println(q3.add(q4));
     }
 }
