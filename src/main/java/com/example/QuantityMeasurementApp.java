@@ -4,7 +4,9 @@ public class QuantityMeasurementApp {
     public enum LengthUnit {
 
         FEET(1.0),
-        INCH(1.0 / 12.0);
+        INCH(1.0 / 12.0),
+        YARDS(3.0),
+        CENTIMETERS(0.0328084);
 
         private final double conversionFactor;
 
@@ -40,7 +42,6 @@ public class QuantityMeasurementApp {
             return unit;
         }
 
-        // Convert to base unit (feet)
         private double toBaseUnit() {
             return unit.toFeet(value);
         }
@@ -48,16 +49,13 @@ public class QuantityMeasurementApp {
         @Override
         public boolean equals(Object obj) {
 
-            // Same reference
             if (this == obj) return true;
 
-            // Null or type check
             if (obj == null || getClass() != obj.getClass()) return false;
 
             Quantity other = (Quantity) obj;
 
-            // Compare after conversion
-            return Double.compare(this.toBaseUnit(), other.toBaseUnit()) == 0;
+            return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < 0.0001;
         }
     }
 
@@ -74,5 +72,18 @@ public class QuantityMeasurementApp {
 
         System.out.println("Input: Quantity(1.0, inch) and Quantity(1.0, inch)");
         System.out.println("Output: Equal (" + q3.equals(q4) + ")");
+
+        Quantity q5 = new Quantity(1.0, LengthUnit.YARDS);
+        Quantity q6 = new Quantity(91.44, LengthUnit.CENTIMETERS);
+
+        System.out.println("Input: Quantity(1.0, yards) and Quantity(91.44, centimeters)");
+        System.out.println("Output: Equal (" + q5.equals(q6) + ")");
+
+        Quantity q7 = new Quantity(1.0, LengthUnit.CENTIMETERS);
+        Quantity q8 = new Quantity(1.0, LengthUnit.CENTIMETERS);
+
+        System.out.println("Input: Quantity(1.0, centimeters) and Quantity(1.0, centimeters)");
+        System.out.println("Output: Equal (" + q7.equals(q8) + ")");
+
     }
 }
