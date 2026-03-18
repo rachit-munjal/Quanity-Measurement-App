@@ -71,6 +71,19 @@ public class QuantityMeasurementApp {
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || this.getClass() != obj.getClass()) return false;
+
+            Quantity other = (Quantity) obj;
+
+            double thisInFeet = this.unit.toFeet(this.value);
+            double otherInFeet = other.unit.toFeet(other.value);
+
+            return Double.compare(thisInFeet, otherInFeet) == 0;
+        }
+
+        @Override
         public String toString() {
             return "Quantity(" + value + ", " + unit + ")";
         }
