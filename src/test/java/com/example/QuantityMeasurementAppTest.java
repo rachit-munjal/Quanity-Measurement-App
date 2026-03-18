@@ -148,4 +148,43 @@ class QuantityLengthTest {
 
         assertThrows(IllegalArgumentException.class, () -> q1.add(null));
     }
+
+    @Test
+    void testAddition_TargetUnit_Feet() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        Quantity result = q1.add(q2, LengthUnit.FEET);
+
+        assertEquals(2.0, result.getValue(), EPSILON);
+    }
+
+    @Test
+    void testAddition_TargetUnit_Inch() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        Quantity result = q1.add(q2, LengthUnit.INCH);
+
+        assertEquals(24.0, result.getValue(), EPSILON);
+    }
+
+    @Test
+    void testAddition_TargetUnit_Yards() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        Quantity result = q1.add(q2, LengthUnit.YARDS);
+
+        assertEquals(0.6667, result.getValue(), 1e-3);
+    }
+
+    @Test
+    void testAddition_TargetUnit_Null() {
+        Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
+        Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> q1.add(q2, null));
+    }
 }

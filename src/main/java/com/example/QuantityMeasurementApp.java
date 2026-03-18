@@ -31,6 +31,7 @@ public class QuantityMeasurementApp {
             this.value = value;
             this.unit = unit;
         }
+
         public double getValue() {
             return value;
         }
@@ -52,6 +53,21 @@ public class QuantityMeasurementApp {
                     sumFeet / this.unit.toFeet(1.0);
 
             return new Quantity(result, this.unit);
+        }
+
+        public Quantity add(Quantity other, LengthUnit targetUnit) {
+            if (other == null || targetUnit == null) {
+                throw new IllegalArgumentException();
+            }
+
+            double sumFeet =
+                    this.unit.toFeet(this.value) +
+                            other.unit.toFeet(other.value);
+
+            double result =
+                    sumFeet / targetUnit.toFeet(1.0);
+
+            return new Quantity(result, targetUnit);
         }
 
         @Override
