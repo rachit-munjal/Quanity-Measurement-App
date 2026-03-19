@@ -2,87 +2,14 @@ package com.example;
 
 public class QuantityMeasurementApp {
 
-    public enum LengthUnit {
-        FEET(1.0),
-        INCH(1.0 / 12.0),
-        YARDS(3.0),
-        CENTIMETERS(0.0328084);
-
-        private final double conversionFactor;
-
-        LengthUnit(double conversionFactor) {
-            this.conversionFactor = conversionFactor;
-        }
-
-        public double toFeet(double value) {
-            return value * conversionFactor;
-        }
-    }
-
-    public static class Quantity {
-
-        private final double value;
-        private final LengthUnit unit;
-
-        public Quantity(double value, LengthUnit unit) {
-            if (unit == null || !Double.isFinite(value)) {
-                throw new IllegalArgumentException();
-            }
-            this.value = value;
-            this.unit = unit;
-        }
-
-        public double getValue() {
-            return value;
-        }
-
-        public LengthUnit getUnit() {
-            return unit;
-        }
-
-        public Quantity add(Quantity other) {
-            if (other == null) {
-                throw new IllegalArgumentException();
-            }
-
-            double sumFeet =
-                    this.unit.toFeet(this.value) +
-                            other.unit.toFeet(other.value);
-
-            double result =
-                    sumFeet / this.unit.toFeet(1.0);
-
-            return new Quantity(result, this.unit);
-        }
-
-        public Quantity add(Quantity other, LengthUnit targetUnit) {
-            if (other == null || targetUnit == null) {
-                throw new IllegalArgumentException();
-            }
-
-            double sumFeet =
-                    this.unit.toFeet(this.value) +
-                            other.unit.toFeet(other.value);
-
-            double result =
-                    sumFeet / targetUnit.toFeet(1.0);
-
-            return new Quantity(result, targetUnit);
-        }
-
-        @Override
-        public String toString() {
-            return "Quantity(" + value + ", " + unit + ")";
-        }
-    }
 
     public static double convert(double value, LengthUnit source, LengthUnit target) {
         if (!Double.isFinite(value) || source == null || target == null) {
             throw new IllegalArgumentException();
         }
 
-        double inFeet = source.toFeet(value);
-        return inFeet / target.toFeet(1.0);
+        double base = source.convertToBaseUnit(value);
+        return target.convertFromBaseUnit(base);
     }
 
     public static void main(String[] args) {
@@ -90,12 +17,12 @@ public class QuantityMeasurementApp {
         Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
         Quantity q2 = new Quantity(12.0, LengthUnit.INCH);
 
-        System.out.println(q1.add(q2));
-        System.out.println(q2.add(q1));
+        System.out.println(q1.add(q2)); // 2 FEET
+        System.out.println(q2.add(q1)); // 24 INCH
 
         Quantity q3 = new Quantity(1.0, LengthUnit.YARDS);
         Quantity q4 = new Quantity(3.0, LengthUnit.FEET);
 
-        System.out.println(q3.add(q4));
+        System.out.println(q3.add(q4)); // 2 YARDS
     }
 }
