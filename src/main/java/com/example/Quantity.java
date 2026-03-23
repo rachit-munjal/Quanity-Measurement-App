@@ -33,6 +33,27 @@ public class Quantity<U extends  IMeasurable>{
         double result=targetUnit.convertFromBaseUnit(sum);
         return new Quantity<>(result,targetUnit);
     }
+    public Quantity<U> subtract(Quantity<U> other){
+        return subtract(other,this.unit);
+    }
+    public Quantity<U> subtract(Quantity<U> other,U targetUnit){
+        if(other==null) throw new IllegalArgumentException("Null quantity");
+        if(targetUnit==null) throw new IllegalArgumentException("Target unit cannot be null");
+        if(this.unit.getClass()!=other.unit.getClass()) throw new IllegalArgumentException("Different measurement categories not allowed");
+        double base1=this.unit.convertToBaseUnit(this.value);
+        double base2=other.unit.convertToBaseUnit(other.value);
+        double sum=base1-base2;
+        double result=targetUnit.convertFromBaseUnit(sum);
+        return new Quantity<>(result,targetUnit);
+    }
+    public double divide(Quantity<U> other){
+        if(other==null) throw new IllegalArgumentException("Null quantity");
+        if(this.unit.getClass()!=other.unit.getClass()) throw new IllegalArgumentException("Different measurement categories not allowed");
+        double base1=this.unit.convertToBaseUnit(this.value);
+        double base2=other.unit.convertToBaseUnit(other.value);
+        if(base2==0) throw new ArithmeticException("Cannot divide by zero");
+        return base1/base2;
+    }
     @Override
     public boolean equals(Object obj){
         if(this==obj) return true;
