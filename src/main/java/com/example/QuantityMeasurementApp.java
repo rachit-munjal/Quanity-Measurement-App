@@ -24,5 +24,14 @@ public class QuantityMeasurementApp {
         System.out.println("Weight Equality: "+demonstrateEquality(w1,w2));
         System.out.println("Weight Conversion: "+demonstrateConversion(w1,WeightUnit.GRAM));
         System.out.println("Weight Addition: "+demonstrateAddition(w1,w2,WeightUnit.KILOGRAM));
+        Quantity<VolumeUnit> v1 = new Quantity<>(1.0, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> v2 = new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+        Quantity<VolumeUnit> v3 = new Quantity<>(1.0, VolumeUnit.GALLON);
+        System.out.println("Volume Equality (L vs mL): "+demonstrateEquality(v1,v2));
+        System.out.println("Volume Equality (L vs gallon approx): "+demonstrateEquality(v1,new Quantity<>(0.264172,VolumeUnit.GALLON)));
+        System.out.println("Volume Conversion (L → mL): "+demonstrateConversion(v1,VolumeUnit.MILLILITRE));
+        System.out.println("Volume Conversion (gallon → L): "+demonstrateConversion(v3,VolumeUnit.LITRE));
+        System.out.println("Volume Addition (L + mL): "+demonstrateAddition(v1,v2,VolumeUnit.LITRE));
+        System.out.println("Volume Addition (gallon + L): "+demonstrateAddition(v3,v1,VolumeUnit.GALLON));
     }
 }
