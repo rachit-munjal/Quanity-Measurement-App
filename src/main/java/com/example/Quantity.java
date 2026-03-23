@@ -1,80 +1,55 @@
 package com.example;
+import java.util.Objects;
 
-public class Quantity {
-
-    private final double value;
-    private final LengthUnit unit;
-
-    public Quantity(double value, LengthUnit unit) {
-        if (unit == null || !Double.isFinite(value)) {
-            throw new IllegalArgumentException();
-        }
-        this.value = value;
-        this.unit = unit;
+public class Quantity<U extends  IMeasurable>{
+    private double value;
+    private U unit;
+    public Quantity(double value,U unit){
+        if(unit==null) throw new IllegalArgumentException("Unit cannot be null");
+        if(Double.isNaN(value) || Double.isInfinite(value)) throw new IllegalArgumentException("Invalid value");
+        this.value=value;
+        this.unit=unit;
     }
-
-    public double getValue() {
+    public double getValue(){
         return value;
     }
-
-    public LengthUnit getUnit() {
+    public  U getUnit(){
         return unit;
     }
-
-    public Quantity convertTo(LengthUnit targetUnit) {
-        if (targetUnit == null) throw new IllegalArgumentException();
-
-        double base = unit.convertToBaseUnit(value);
-        double converted = targetUnit.convertFromBaseUnit(base);
-
-        return new Quantity(converted, targetUnit);
+    public Quantity<U> convertTo(U targetUnit) {
+        if(targetUnit==null) throw new IllegalArgumentException("Target unit cannot be null");
+        double baseValue=unit.convertToBaseUnit(value);
+        double convertedValue=targetUnit.convertFromBaseUnit(baseValue);
+        return new Quantity<>(convertedValue,targetUnit);
     }
-
-    public Quantity add(Quantity other) {
-        if (other == null) throw new IllegalArgumentException();
-
-        double sumBase =
-                this.unit.convertToBaseUnit(this.value) +
-                        other.unit.convertToBaseUnit(other.value);
-
-        double result = this.unit.convertFromBaseUnit(sumBase);
-
-        return new Quantity(result, this.unit);
+    public Quantity<U> add(Quantity<U> other){
+        return add(other,this.unit);
     }
-
-    public Quantity add(Quantity other, LengthUnit targetUnit) {
-        if (other == null || targetUnit == null)
-            throw new IllegalArgumentException();
-
-        double sumBase =
-                this.unit.convertToBaseUnit(this.value) +
-                        other.unit.convertToBaseUnit(other.value);
-
-        double result = targetUnit.convertFromBaseUnit(sumBase);
-
-        return new Quantity(result, targetUnit);
+    public Quantity<U> add(Quantity<U> other,U targetUnit){
+        if(this.unit.getClass()!=other.unit.getClass()) throw new IllegalArgumentException("Different measurement categories not allowed");
+        double base1=this.unit.convertToBaseUnit(this.value);
+        double base2=other.unit.convertToBaseUnit(other.value);
+        double sum=base1+base2;
+        double result=targetUnit.convertFromBaseUnit(sum);
+        return new Quantity<>(result,targetUnit);
     }
-
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Quantity)) return false;
-
-        Quantity other = (Quantity) obj;
-
-        double thisBase = unit.convertToBaseUnit(value);
-        double otherBase = other.unit.convertToBaseUnit(other.value);
-
-        return Math.abs(thisBase - otherBase) < 1e-6;
+    public boolean equals(Object obj){
+        if(this==obj) return true;
+        if (!(obj instanceof Quantity<?>)) return false;
+        Quantity<?> other = (Quantity<?>) obj;
+        if(this.unit.getClass()!=other.unit.getClass()) return false;
+        double base1=this.unit.convertToBaseUnit(this.value);
+        double base2=((IMeasurable)other.unit).convertToBaseUnit(other.value);
+        return Math.abs(base1-base2)<0.0001;
     }
-
     @Override
-    public int hashCode() {
-        return Double.hashCode(unit.convertToBaseUnit(value));
+    public String toString(){
+        return "Quantity("+value+", "+unit.getUnitName()+")";
     }
-
     @Override
-    public String toString() {
-        return "Quantity(" + value + ", " + unit + ")";
+    public int hashCode(){
+        double base=unit.convertToBaseUnit(value);
+        return Objects.hash(base,unit.getClass());
     }
 }
