@@ -86,6 +86,8 @@ public class Quantity<U extends  IMeasurable> {
         if(targetRequired && targetUnit==null) throw new IllegalArgumentException("Target unit cannot be null");
     }
     private double performBaseArithmetic(Quantity<U> other,ArithmeticOperation operation){
+        unit.validateOperationSupport(operation.name());
+        other.unit.validateOperationSupport(operation.name());
         double base1=unit.convertToBaseUnit(value);
         double base2=other.unit.convertToBaseUnit(other.value);
         return operation.compute(base1,base2);

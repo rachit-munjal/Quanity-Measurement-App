@@ -1,48 +1,54 @@
 package com.example;
 
 public class QuantityMeasurementApp {
-    public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> quantity1,Quantity<U> quantity2){
-        return quantity1.equals(quantity2);
+    public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> q1,Quantity<U> q2){
+        return q1.equals(q2);
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateConversion(Quantity<U> quantity,U targetUnit){
-        return quantity.convertTo(targetUnit);
+    public static <U extends IMeasurable> Quantity<U> demonstrateConversion(Quantity<U> q,U targetUnit){
+        return q.convertTo(targetUnit);
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> quantity1,Quantity<U> quantity2){
-        return quantity1.add(quantity2);
+    public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> q1,Quantity<U> q2){
+        return q1.add(q2);
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> quantity1,Quantity<U> quantity2,U targetUnit){
-        return quantity1.add(quantity2,targetUnit);
+    public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> q1,Quantity<U> q2,U targetUnit){
+        return q1.add(q2,targetUnit);
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> quantity1,Quantity<U> quantity2){
-        return quantity1.subtract(quantity2);
+    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> q1,Quantity<U> q2){
+        return q1.subtract(q2);
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> quantity1,Quantity<U> quantity2,U targetUnit){
-        return quantity1.subtract(quantity2,targetUnit);
+    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> q1,Quantity<U> q2,U targetUnit){
+        return q1.subtract(q2,targetUnit);
     }
-    public static <U extends IMeasurable> double demonstrateDivision(Quantity<U> quantity1,Quantity<U> quantity2){
-        return quantity1.divide(quantity2);
+    public static <U extends IMeasurable> double demonstrateDivision(Quantity<U> q1,Quantity<U> q2){
+        return q1.divide(q2);
     }
     public static void main(String[] args) {
-        System.out.println(demonstrateAddition(new Quantity<>(1.0,LengthUnit.FEET),new Quantity<>(12.0,LengthUnit.INCHES)));
-        System.out.println(demonstrateAddition(new Quantity<>(10.0,WeightUnit.KILOGRAM),new Quantity<>(5000.0,WeightUnit.GRAM),WeightUnit.GRAM));
-        System.out.println(demonstrateSubtraction(new Quantity<>(10.0,LengthUnit.FEET),new Quantity<>(6.0,LengthUnit.INCHES)));
-        System.out.println(demonstrateSubtraction(new Quantity<>(5.0,VolumeUnit.LITRE),new Quantity<>(2.0,VolumeUnit.LITRE),VolumeUnit.MILLILITRE));
-        System.out.println(demonstrateDivision(new Quantity<>(10.0,LengthUnit.FEET),new Quantity<>(2.0,LengthUnit.FEET)));
-        System.out.println(demonstrateDivision(new Quantity<>(24.0,LengthUnit.INCHES),new Quantity<>(2.0,LengthUnit.FEET)));
-        try{
-            System.out.println(demonstrateAddition(new Quantity<>(10.0,LengthUnit.FEET),null));
+        System.out.println(demonstrateEquality(new Quantity<>(0.0,TemperatureUnit.CELSIUS),new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT)));
+        System.out.println(demonstrateEquality(new Quantity<>(273.15,TemperatureUnit.KELVIN),new Quantity<>(0.0,TemperatureUnit.CELSIUS)));
+        System.out.println(demonstrateEquality(new Quantity<>(212.0,TemperatureUnit.FAHRENHEIT),new Quantity<>(100.0,TemperatureUnit.CELSIUS)));
+        System.out.println(demonstrateEquality(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(373.15,TemperatureUnit.KELVIN)));
+        System.out.println(demonstrateEquality(new Quantity<>(50.0,TemperatureUnit.CELSIUS),new Quantity<>(122.0,TemperatureUnit.FAHRENHEIT)));
+        System.out.println(demonstrateConversion(new Quantity<>(100.0,TemperatureUnit.CELSIUS),TemperatureUnit.FAHRENHEIT));
+        System.out.println(demonstrateConversion(new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT),TemperatureUnit.CELSIUS));
+        System.out.println(demonstrateConversion(new Quantity<>(273.15,TemperatureUnit.KELVIN),TemperatureUnit.CELSIUS));
+        System.out.println(demonstrateConversion(new Quantity<>(0.0,TemperatureUnit.CELSIUS),TemperatureUnit.KELVIN));
+        System.out.println(demonstrateConversion(new Quantity<>(-40.0,TemperatureUnit.CELSIUS),TemperatureUnit.FAHRENHEIT));
+        try {
+            System.out.println(demonstrateAddition(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(50.0,TemperatureUnit.CELSIUS)));
         }catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
         try{
-            System.out.println(demonstrateSubtraction(new Quantity<>(10.0,LengthUnit.FEET),new Quantity<>(5.0,WeightUnit.KILOGRAM)));
+            System.out.println(demonstrateSubtraction(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(50.0,TemperatureUnit.CELSIUS)));
         }catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
         try{
-            System.out.println(demonstrateDivision(new Quantity<>(10.0, LengthUnit.FEET),new Quantity<>(0.0,LengthUnit.FEET)));
+            System.out.println(demonstrateDivision(new Quantity<>(100.0, TemperatureUnit.CELSIUS),new Quantity<>(50.0,TemperatureUnit.CELSIUS)));
         }catch(Exception e){
             System.out.println("Error: "+e.getMessage());
         }
+        System.out.println(demonstrateEquality(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(100.0,LengthUnit.FEET)));
+        System.out.println(demonstrateEquality(new Quantity<>(50.0,TemperatureUnit.CELSIUS),new Quantity<>(50.0,WeightUnit.KILOGRAM)));
     }
 }
