@@ -24,4 +24,20 @@ public enum VolumeUnit implements IMeasurable{
     public String getUnitName(){
         return this.name();
     }
+    @Override
+    public String getMeasurementType(){
+        return "VOLUME";
+    }
+    @Override
+    public IMeasurable getUnitInstance(String unitName){
+        return VolumeUnit.valueOf(unitName);
+    }
+    @Override
+    public double fromBase(double resultBase) {
+        return convertFromBaseUnit(resultBase);
+    }
+    @Override
+    public double toBase(double value) {
+        return convertToBaseUnit(value);
+    }
 }

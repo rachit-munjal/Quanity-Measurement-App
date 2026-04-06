@@ -48,6 +48,22 @@ public enum TemperatureUnit implements IMeasurable{
         }
     }
     @Override
+    public String getMeasurementType(){
+        return "TEMPERATURE";
+    }
+    @Override
+    public IMeasurable getUnitInstance(String unitName){
+        return TemperatureUnit.valueOf(unitName);
+    }
+    @Override
+    public double fromBase(double resultBase) {
+        return convertFromBaseUnit(resultBase);
+    }
+    @Override
+    public double toBase(double value) {
+        return convertToBaseUnit(value);
+    }
+    @Override
     public String toString(){
         return name();
     }

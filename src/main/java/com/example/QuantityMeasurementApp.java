@@ -1,54 +1,60 @@
 package com.example;
 
+import java.util.List;
+
 public class QuantityMeasurementApp {
-    public static <U extends IMeasurable> boolean demonstrateEquality(Quantity<U> q1,Quantity<U> q2){
-        return q1.equals(q2);
+
+    private static QuantityMeasurementApp instance;
+    public QuantityMeasurementController controller;
+    public IQuantityMeasurementRepository repository;
+
+    private QuantityMeasurementApp() {
+        this.repository = QuantityMeasurementCacheRepository.getInstance();
+        IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(this.repository);
+        this.controller = new QuantityMeasurementController(service);
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateConversion(Quantity<U> q,U targetUnit){
-        return q.convertTo(targetUnit);
+
+    public static QuantityMeasurementApp getInstance() {
+        if (instance == null) {
+            instance = new QuantityMeasurementApp();
+        }
+        return instance;
     }
-    public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> q1,Quantity<U> q2){
-        return q1.add(q2);
-    }
-    public static <U extends IMeasurable> Quantity<U> demonstrateAddition(Quantity<U> q1,Quantity<U> q2,U targetUnit){
-        return q1.add(q2,targetUnit);
-    }
-    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> q1,Quantity<U> q2){
-        return q1.subtract(q2);
-    }
-    public static <U extends IMeasurable> Quantity<U> demonstrateSubtraction(Quantity<U> q1,Quantity<U> q2,U targetUnit){
-        return q1.subtract(q2,targetUnit);
-    }
-    public static <U extends IMeasurable> double demonstrateDivision(Quantity<U> q1,Quantity<U> q2){
-        return q1.divide(q2);
-    }
+
     public static void main(String[] args) {
-        System.out.println(demonstrateEquality(new Quantity<>(0.0,TemperatureUnit.CELSIUS),new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT)));
-        System.out.println(demonstrateEquality(new Quantity<>(273.15,TemperatureUnit.KELVIN),new Quantity<>(0.0,TemperatureUnit.CELSIUS)));
-        System.out.println(demonstrateEquality(new Quantity<>(212.0,TemperatureUnit.FAHRENHEIT),new Quantity<>(100.0,TemperatureUnit.CELSIUS)));
-        System.out.println(demonstrateEquality(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(373.15,TemperatureUnit.KELVIN)));
-        System.out.println(demonstrateEquality(new Quantity<>(50.0,TemperatureUnit.CELSIUS),new Quantity<>(122.0,TemperatureUnit.FAHRENHEIT)));
-        System.out.println(demonstrateConversion(new Quantity<>(100.0,TemperatureUnit.CELSIUS),TemperatureUnit.FAHRENHEIT));
-        System.out.println(demonstrateConversion(new Quantity<>(32.0,TemperatureUnit.FAHRENHEIT),TemperatureUnit.CELSIUS));
-        System.out.println(demonstrateConversion(new Quantity<>(273.15,TemperatureUnit.KELVIN),TemperatureUnit.CELSIUS));
-        System.out.println(demonstrateConversion(new Quantity<>(0.0,TemperatureUnit.CELSIUS),TemperatureUnit.KELVIN));
-        System.out.println(demonstrateConversion(new Quantity<>(-40.0,TemperatureUnit.CELSIUS),TemperatureUnit.FAHRENHEIT));
+        QuantityMeasurementApp app = QuantityMeasurementApp.getInstance();
+
+        // 1. Length Equality Demonstration
+        System.out.println("\nExample 1: Length Equality Demonstration");
+        QuantityDTO q1 = new QuantityDTO(1.0, QuantityDTO.LengthUnit.FEET);
+        QuantityDTO q2 = new QuantityDTO(12.0, QuantityDTO.LengthUnit.INCHES);
+        System.out.println("Compare 1.0 FEET and 12.0 INCHES: " + app.controller.performComparison(q1, q2));
+
+        // 2. Temperature Addition Attempt
+        System.out.println("\nExample 2: Temperature Addition Attempt");
+        QuantityDTO t1 = new QuantityDTO(0.0, QuantityDTO.TemperatureUnit.CELSIUS);
+        QuantityDTO t2 = new QuantityDTO(32.0, QuantityDTO.TemperatureUnit.FAHRENHEIT);
         try {
-            System.out.println(demonstrateAddition(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(50.0,TemperatureUnit.CELSIUS)));
-        }catch(Exception e){
-            System.out.println("Error: "+e.getMessage());
+            app.controller.performAddition(t1, t2);
+        } catch (QuantityMeasurementException e) {
+            System.out.println("Expected Error: " + e.getMessage());
         }
-        try{
-            System.out.println(demonstrateSubtraction(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(50.0,TemperatureUnit.CELSIUS)));
-        }catch(Exception e){
-            System.out.println("Error: "+e.getMessage());
+
+        // 3. Cross-Category Operation Prevention
+        System.out.println("\nExample 3: Cross-Category Operation Prevention");
+        QuantityDTO length = new QuantityDTO(1.0, QuantityDTO.LengthUnit.FEET);
+        QuantityDTO weight = new QuantityDTO(1.0, QuantityDTO.WeightUnit.KILOGRAM);
+        try {
+            app.controller.performComparison(length, weight);
+        } catch (QuantityMeasurementException e) {
+            System.out.println("Expected Error: " + e.getMessage());
         }
-        try{
-            System.out.println(demonstrateDivision(new Quantity<>(100.0, TemperatureUnit.CELSIUS),new Quantity<>(50.0,TemperatureUnit.CELSIUS)));
-        }catch(Exception e){
-            System.out.println("Error: "+e.getMessage());
+
+        // 4. Print Repository History
+        System.out.println("\n--- Operation History from Repository ---");
+        List<QuantityMeasurementEntity> history = app.repository.getAllMeasurements();
+        for (QuantityMeasurementEntity entity : history) {
+            System.out.println(entity);
         }
-        System.out.println(demonstrateEquality(new Quantity<>(100.0,TemperatureUnit.CELSIUS),new Quantity<>(100.0,LengthUnit.FEET)));
-        System.out.println(demonstrateEquality(new Quantity<>(50.0,TemperatureUnit.CELSIUS),new Quantity<>(50.0,WeightUnit.KILOGRAM)));
     }
 }
