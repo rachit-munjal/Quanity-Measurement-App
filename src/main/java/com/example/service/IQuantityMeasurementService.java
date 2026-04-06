@@ -1,4 +1,6 @@
-package com.example;
+package com.example.service;
+
+import com.example.entity.QuantityDTO;
 
 public interface IQuantityMeasurementService {
     boolean compare(QuantityDTO q1, QuantityDTO q2);

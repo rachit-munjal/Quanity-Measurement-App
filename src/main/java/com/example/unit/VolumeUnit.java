@@ -1,13 +1,11 @@
-package com.example;
+package com.example.unit;
 
-public enum LengthUnit implements IMeasurable {
-    FEET(12.0),
-    INCHES(1.0),
-    YARDS(36.0),
-    METERS(39.3701),
-    CENTIMETERS(0.393701);
+public enum VolumeUnit implements IMeasurable {
+    LITRE(1.0),
+    MILLILITRE(0.001),
+    GALLON(3.78541);
     private final double conversionFactor;
-    LengthUnit(double conversionFactor){
+    VolumeUnit(double conversionFactor){
         this.conversionFactor=conversionFactor;
     }
     @Override
@@ -28,11 +26,11 @@ public enum LengthUnit implements IMeasurable {
     }
     @Override
     public String getMeasurementType(){
-        return "LENGTH";
+        return "VOLUME";
     }
     @Override
     public IMeasurable getUnitInstance(String unitName){
-        return LengthUnit.valueOf(unitName);
+        return VolumeUnit.valueOf(unitName);
     }
     @Override
     public double fromBase(double resultBase) {

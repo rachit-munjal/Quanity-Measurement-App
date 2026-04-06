@@ -1,4 +1,6 @@
-package com.example;
+package com.example.entity;
+
+import com.example.unit.LengthUnit;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -9,6 +11,8 @@ import java.util.Objects;
 public class QuantityMeasurementEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private int id;
 
     // INPUT 1
     public double thisValue;
@@ -58,6 +62,8 @@ public class QuantityMeasurementEntity implements Serializable {
 
     // ================= CONSTRUCTORS =================
 
+    public QuantityMeasurementEntity() {}
+
     // 1. Comparison (Equal / Not Equal)
     public QuantityMeasurementEntity(QuantityModel<?> thisQ,
                                      QuantityModel<?> thatQ,
@@ -101,6 +107,14 @@ public class QuantityMeasurementEntity implements Serializable {
         this.isError = isError;
     }
 
+    // ================= GETTERS AND SETTERS =================
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    // (Adding public fields for simplicity/backward compatibility as seen in original code,
+    // but JDBC repository will use these or direct field access)
+
     // ================= EQUALS =================
     @Override
     public boolean equals(Object obj) {
@@ -119,7 +133,6 @@ public class QuantityMeasurementEntity implements Serializable {
     // ================= toString =================
     @Override
     public String toString() {
-
         if (isError) {
             return "ERROR [" + operation + "]: " + errorMessage;
         }
@@ -130,21 +143,5 @@ public class QuantityMeasurementEntity implements Serializable {
 
         return operation + " → Result: " +
                 resultValue + " " + resultUnit;
-    }
-
-    // ================= TEST =================
-    public static void main(String[] args) {
-
-        QuantityModel<LengthUnit> q1 =
-                new QuantityModel<>(10, LengthUnit.FEET);
-
-        QuantityModel<LengthUnit> q2 =
-                new QuantityModel<>(3, LengthUnit.METERS);
-
-        QuantityModel<LengthUnit> result =
-                new QuantityModel<>(13, LengthUnit.FEET);
-        QuantityMeasurementEntity entity =
-                new QuantityMeasurementEntity(q1, q2, "ADD", result);
-        System.out.println(entity);
     }
 }

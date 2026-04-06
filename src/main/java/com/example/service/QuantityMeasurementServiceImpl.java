@@ -1,11 +1,22 @@
-package com.example;
+package com.example.service;
+
+import com.example.entity.QuantityDTO;
+import com.example.entity.QuantityMeasurementEntity;
+import com.example.entity.QuantityModel;
+import com.example.exception.QuantityMeasurementException;
+import com.example.repository.IQuantityMeasurementRepository;
+import com.example.unit.*;
+
+import java.util.logging.Logger;
 
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService {
 
+    private static final Logger logger = Logger.getLogger(QuantityMeasurementServiceImpl.class.getName());
     private IQuantityMeasurementRepository repository;
 
     public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository) {
         this.repository = repository;
+        logger.info("QuantityMeasurementServiceImpl init with repository: " + repository.getClass().getSimpleName());
     }
 
     @Override
@@ -45,7 +56,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             QuantityModel<IMeasurable> resultModel = new QuantityModel<>(resultValue, target.getUnit());
             repository.save(new QuantityMeasurementEntity(m1, null, "CONVERT", resultModel));
 
-            return new QuantityDTO(resultValue, (QuantityDTO.IMeasurableUnit) findUnitInDTO(targetDTO));
+            return new QuantityDTO(resultValue, q1.getUnit(), q1.getMeasurementType());
         } catch (Exception e) {
             repository.save(new QuantityMeasurementEntity(m1, null, "CONVERT", e.getMessage(), true));
             throw new QuantityMeasurementException(e.getMessage());
@@ -150,20 +161,11 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
             QuantityModel<IMeasurable> resultModel = new QuantityModel<>(resValue, target.getUnit());
             repository.save(new QuantityMeasurementEntity(m1, m2, op, resultModel));
 
-            return new QuantityDTO(resValue, (QuantityDTO.IMeasurableUnit) findUnitInDTO(targetDTO));
+            return new QuantityDTO(resValue, targetDTO.getUnit(), targetDTO.getMeasurementType());
         } catch (Exception e) {
             repository.save(new QuantityMeasurementEntity(m1, m2, op, e.getMessage(), true));
             throw new QuantityMeasurementException(e.getMessage());
         }
     }
-
-    private Object findUnitInDTO(QuantityDTO dto) {
-        String type = dto.getMeasurementType();
-        String name = dto.getUnit();
-        if ("LENGTH".equals(type)) return QuantityDTO.LengthUnit.valueOf(name);
-        if ("WEIGHT".equals(type)) return QuantityDTO.WeightUnit.valueOf(name);
-        if ("VOLUME".equals(type)) return QuantityDTO.VolumeUnit.valueOf(name);
-        if ("TEMPERATURE".equals(type)) return QuantityDTO.TemperatureUnit.valueOf(name);
-        return null;
-    }
 }
+

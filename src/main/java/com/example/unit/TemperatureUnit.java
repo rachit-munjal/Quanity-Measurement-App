@@ -1,8 +1,8 @@
-package com.example;
+package com.example.unit;
 
 import java.util.function.Function;
 
-public enum TemperatureUnit implements IMeasurable{
+public enum TemperatureUnit implements IMeasurable {
     CELSIUS(0),
     FAHRENHEIT(1),
     KELVIN(2);

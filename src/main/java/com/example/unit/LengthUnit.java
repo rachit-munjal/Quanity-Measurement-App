@@ -1,13 +1,13 @@
-package com.example;
+package com.example.unit;
 
-public enum WeightUnit implements IMeasurable{
-    MILLIGRAM(0.001),
-    GRAM(1.0),
-    KILOGRAM(1000.0),
-    POUND(453.592),
-    TONNE(1_000_000.0);
+public enum LengthUnit implements IMeasurable {
+    FEET(12.0),
+    INCHES(1.0),
+    YARDS(36.0),
+    METERS(39.3701),
+    CENTIMETERS(0.393701);
     private final double conversionFactor;
-    WeightUnit(double conversionFactor){
+    LengthUnit(double conversionFactor){
         this.conversionFactor=conversionFactor;
     }
     @Override
@@ -28,11 +28,11 @@ public enum WeightUnit implements IMeasurable{
     }
     @Override
     public String getMeasurementType(){
-        return "WEIGHT";
+        return "LENGTH";
     }
     @Override
     public IMeasurable getUnitInstance(String unitName){
-        return WeightUnit.valueOf(unitName);
+        return LengthUnit.valueOf(unitName);
     }
     @Override
     public double fromBase(double resultBase) {
